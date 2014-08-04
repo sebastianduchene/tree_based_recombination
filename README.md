@@ -209,6 +209,7 @@ I use the PAM algorithm and the Gap statistic to find the optimal number of clus
 ```r
 w_scale <- cmdscale(as.dist(w_dist))
 w_clust <- clusGap(w_scale, pam, K.max = 7)
+plot(w_clust)
 ```
 
 ```
@@ -217,6 +218,8 @@ w_clust <- clusGap(w_scale, pam, K.max = 7)
 ## .................................................. 50 
 ## .................................................. 100
 ```
+![plot of chunk unnamed-chunk-12](figure/gap1.png) 
+
 
 ```r
 k_clust <- pam(w_scale, k = maxSE(w_clust$Tab[, 3], w_clust$Tab[, 4]))
@@ -277,11 +280,16 @@ w_clust <- clusGap(w_scale, pam, K.max = 7)
 ## .................................................. 100
 ```
 
+Plot the fit of the k possible clusters and the MDS points.
 ```r
 k_clust <- pam(w_scale, k = maxSE(w_clust$Tab[, 3], w_clust$Tab[, 4]))
 data_clustered <- cbind(range_250, k_clust$clustering)
+plot(w_clust)
 plot(w_scale, pch = 20, col = rainbow(max(k_clust$clustering))[k_clust$clustering], ylab = 'MDS2', xlab = 'MDS1', cex = 2)
 ```
+![plot of chunk unnamed-chunk-15](figure/gap2.png) 
+
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) 
 
 ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) 
 
