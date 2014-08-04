@@ -226,6 +226,8 @@ k_clust <- pam(w_scale, k = maxSE(w_clust$Tab[, 3], w_clust$Tab[, 4]))
 data_clustered <- cbind(range_200, k_clust$clustering)
 ```
 
+The optimal number of clusters (trees in the alignment) is 5. This is one more than tthe simulated. 
+
 Visualise the MDS of the tree distances. The points are the trees for every window slide. The colours are their corresponding clusters.
 
 
@@ -252,7 +254,7 @@ image(as.matrix(c(rep(1, 10), rep(2, 10), rep(3, 20), rep(4, 20), rep(2, 10), re
 ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
 
 
-There are a few incorrect classifications. The number of trees is also higher than the simulated. This may be improved with a larger window size. This is done by the user, but some automated procedures may work better.
+There are a few incorrect classifications. The number of trees is also higher than the simulated (also shown in the Gap vs. k plot above). This may be improved with a larger window size. This is done by the user, but some automated procedures may work better.
 
 
 
@@ -289,9 +291,12 @@ plot(w_scale, pch = 20, col = rainbow(max(k_clust$clustering))[k_clust$clusterin
 ```
 ![plot of chunk unnamed-chunk-15](figure/gap2.png) 
 
+The optimal number of clusters is 4, which matches the simulated value. 
+
 ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) 
 
 ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) 
+
 
 ```r
 image(as.matrix(data_clustered[, 3]), col = rainbow(max(k_clust$clustering)), ylab = 'Taxa', xlab = 'Position in the alignment', main = 'Algorithm classification with window size of 250')
