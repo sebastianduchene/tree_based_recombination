@@ -118,6 +118,7 @@ densiTree(gene_trees)
 
 ![plot of chunk unnamed-chunk-5](figure/chunk2.png) 
 
+An other option is to use phylogenetic networks. The implementation is based on consensus trees, they rely on the inference of the breakpoints.
 
 ```r
 consensusNet(gene_trees)
