@@ -5,7 +5,7 @@ August 4 2014
 
 This method uses a sliding window across sites in an alignment. For each window it estimates a neighbour-joining tree. The next step is to estimate the Branch Score Distance ([Penny and Hendy 1985](#references)) for all pairs of trees. This metric only consideres topology and it naturally adjusts to polytomies, but it does not consider branch lengths. This is an important requirement because sections of the genome that have the same evolutionary history can have different rates, or be subject to different selective constraints.
 
-The distances between trees can be used to represent the space of tree topologies in the alignment, which can be visualized with a multidimensional scaling (MDS) algorithm. If there is no recombination, the topologies for all trees should be very similar, although it some incongruence is expected due to stochastic variation along the sequences. In the presence of recombination between lienages, there should be as many topologies as there are recombination events. This would result in several clusters of trees in the tree topology space. A **cluster** is a portion of the alignment with that follows a single evolutionary history, with no recombination. The clusters of trees can be identified using discrete clustering method or other unsupervised learning algorithms. For the purpose of this example I use the Gap statistic, which has worked well in other projects that used tree distances.
+The distances between trees can be used to represent the space of tree topologies in the alignment, which can be visualized with a multidimensional scaling (MDS) algorithm. If there is no recombination, the topologies for all trees should be very similar, although it some incongruence is expected due to stochastic variation along the sequences. In the presence of recombination between lienages, there should be as many topologies as there are recombination events (I refer to these as 'gene trees', although a more appropriate term may be 'loci trees' or 'breakpoint trees'). This would result in several clusters of trees in the tree topology space. A **cluster** is a portion of the alignment with that follows a single evolutionary history, with no recombination. The clusters of trees can be identified using discrete clustering method or other unsupervised learning algorithms. For the purpose of this example I use the Gap statistic, which has worked well in other projects that used tree distances.
 
 This method has some advantages over other phylogenetic approaches to detect recombination:
 
@@ -81,6 +81,7 @@ for(i in 1:4){
 ```
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+**Fig 1.** Gene trees used in the simulation
 
 The consensus of the gene trees can be inspected to determine the sections of the tree that are poorly resolved, possibly due to recombination events.
 
@@ -94,6 +95,7 @@ nodelabels(pclades, frame = 'cir', cex = 0.7, bg = c('red', 'white')[(pclades ==
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+**Fig 2.** Consensus tree of the simulated gene trees. Nodes coloured in red have low are incongruent for some species trees, possibly indicating recombination events.
 
 The consensus tree can also be represented as a densiTree:
 
@@ -117,6 +119,7 @@ densiTree(gene_trees)
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/chunk2.png) 
+**Fig 3.** DensiTree illustration of the gene trees.
 
 An other option is to use phylogenetic networks. The implementation is based on consensus trees, they rely on the inference of the breakpoints.
 
@@ -125,7 +128,7 @@ consensusNet(gene_trees)
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/chunk3.png) 
-
+**Fig 4.** Phylogenetic network estimated using consensus of gene trees.
 
 
 I simulate 10 alignments for the gene trees. In each case I multiply the branch lengths of the tree by absolute values of a random normal variatble. This is to create different levels sequence divergence.
@@ -220,14 +223,14 @@ plot(w_clust)
 ## .................................................. 100
 ```
 ![plot of chunk unnamed-chunk-12](figure/gap1.png) 
-
+**Fig 5.** Statistical fit for number of clusters for a window size of 200. The optimal number of clusters (gene trees) is 5. This is one more than that used in the simulations.
 
 ```r
 k_clust <- pam(w_scale, k = maxSE(w_clust$Tab[, 3], w_clust$Tab[, 4]))
 data_clustered <- cbind(range_200, k_clust$clustering)
 ```
 
-The optimal number of clusters (trees in the alignment) is 5. This is one more than tthe simulated. 
+
 
 Visualise the MDS of the tree distances. The points are the trees for every window slide. The colours are their corresponding clusters.
 
@@ -237,6 +240,7 @@ plot(w_scale, pch = 20, col = rainbow(max(k_clust$clustering))[k_clust$clusterin
 ```
 
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+**Fig 6.** MDS of tree distances. Each point represents the tree obtained with a window in the alignment. The colours correspond to the cluster assignment.
 
 The results can be shown by plotting a matirx of the clustering assignment. The colours correspond to those of the MDS and they represent the tres in along the alignment. The rows would represent the taxa, while the colums are the position in the original alignment:
 
@@ -245,6 +249,7 @@ image(as.matrix(data_clustered[, 3]), col = rainbow(max(k_clust$clustering)), yl
 ```
 
 ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
+**Fig 7.** Assignment of windows to clusters inferred by the method. It should match closely that of Fig 8. The columns represent sites, and the rows are taxa. Future modification should identify the taxa or lineages with recombination events.
 
 The simulated data can also be shown for comparisson. This is the expected result if the algorithm detected recombination break-points with out error: 
 
@@ -253,7 +258,7 @@ image(as.matrix(c(rep(1, 10), rep(2, 10), rep(3, 20), rep(4, 20), rep(2, 10), re
 ```
 
 ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
-
+**Fig 8.** Assignment of windows to clusters used to simulate the data. This is the ideal result from the algorithm. 
 
 There are a few incorrect classifications. The number of trees is also higher than the simulated (also shown in the Gap vs. k plot above). This may be improved with a larger window size. This is done by the user, but some automated procedures may work better.
 
@@ -291,26 +296,28 @@ plot(w_clust)
 plot(w_scale, pch = 20, col = rainbow(max(k_clust$clustering))[k_clust$clustering], ylab = 'MDS2', xlab = 'MDS1', cex = 2)
 ```
 ![plot of chunk unnamed-chunk-15](figure/gap2.png) 
+**Fig 9.** Statistical fit of different numbers of clusters for window size of 250. In this case it identifies the correct number of breakpoints. 
 
-The optimal number of clusters is 4, which matches the simulated value. 
 
 
 ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) 
-
+**FIg 10.** MDS of trees estimated for the different windows
 
 ```r
 image(as.matrix(data_clustered[, 3]), col = rainbow(max(k_clust$clustering)), ylab = 'Taxa', xlab = 'Position in the alignment', main = 'Algorithm classification with window size of 250')
 ```
 
 ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-152.png) 
+**Fig 11.** Assignment of windows to clusters. There are a few misclassifications, but the pattern closely matches the expected (Fig 12) 
+
 
 ```r
 image(as.matrix(c(rep(1, 10), rep(2, 10), rep(3, 20), rep(4, 20), rep(2, 10), rep(1, 20), rep(1, 10))), col = rainbow(max(k_clust$clustering)), ylab = 'Taxa', xlab = 'Position in the alignment', main = 'Simulated data')
 ```
 
 ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-153.png) 
+**Fig 12.** Assignment of windows to clusters used to simulate the data. This is the ideal result from the algorithm. 
 
-Although it still misclassifies some sites, it has fewer errors.
 
 
 References
