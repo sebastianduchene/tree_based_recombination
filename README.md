@@ -294,7 +294,6 @@ plot(w_scale, pch = 20, col = rainbow(max(k_clust$clustering))[k_clust$clusterin
 
 The optimal number of clusters is 4, which matches the simulated value. 
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) 
 
 ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) 
 
